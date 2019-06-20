@@ -16,6 +16,15 @@ podAnnotations: {}
 
 env: {}
 
+postgresql:
+  image:
+    tag: 10-debian-9
+  postgresqlUsername: postgres
+  postgresqlPassword: password
+  postgresqlDatabase: jxapp
+  persistence:
+    enabled: false
+
 service:
   name: jx-node-app-svc
   externalPort: 80
@@ -25,7 +34,7 @@ service:
     fabric8.io/ingress.annotations: "kubernetes.io/ingress.class: nginx"
   type: ClusterIP
 
-resources:
+resources:1`
   limits:
     cpu: "50m"
     memory: "100Mi"
