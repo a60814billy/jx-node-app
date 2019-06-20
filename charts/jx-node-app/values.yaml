@@ -27,7 +27,7 @@ service:
 
 resources:
   limits:
-    cup: "50m"
+    cpu: "50m"
     memory: "100Mi"
 
 probePath: /
