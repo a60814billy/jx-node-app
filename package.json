@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@hackmd/config": "git+https://github.com/hackmdio/config.git",
     "chance": "^1.0.18",
     "express": "^4.17.1",
     "pg": "^7.11.0",
