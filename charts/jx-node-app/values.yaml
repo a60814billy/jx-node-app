@@ -10,7 +10,7 @@ replicaCount: 1
 image:
   repository: draft
   tag: dev
-  pullPolicy: IfNotPresent
+  pullPolicy: "IfNotPresent"
 
 podAnnotations: {}
 
@@ -27,8 +27,8 @@ service:
 
 resources:
   limits:
-    cup: 50m
-    memory: 100Mi
+    cup: "50m"
+    memory: "100Mi"
 
 probePath: /
 livenessProbe:
