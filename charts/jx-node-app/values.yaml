@@ -19,6 +19,7 @@ env: {}
 postgresql:
   image:
     tag: 10-debian-9
+  fullnameOverride: jxappdb
   postgresqlUsername: postgres
   postgresqlPassword: password
   postgresqlDatabase: jxapp

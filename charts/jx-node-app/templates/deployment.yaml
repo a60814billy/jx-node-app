@@ -29,7 +29,7 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
           env:
             - name: DB_URL"
-              value: "postgresql://{{ .Values.postgresql.postgresqlUsername }}:{{ .Values.postgresql.postgresqlPassword }}@{{ template "postgresql.fullname" . }}/{{ .Values.postgresql.postgresqlDatabase }}"
+              value: "postgresql://{{ .Values.postgresql.postgresqlUsername }}:{{ .Values.postgresql.postgresqlPassword }}@{{ .Values.postgresql.fullnameOverride }}/{{ .Values.postgresql.postgresqlDatabase }}"
             - name: NODE_ENV
               value: production
 {{- range $pkey, $pval := .Values.env }}
