@@ -15,6 +15,7 @@ if (env === 'development') {
   })
 } else {
   logger = pino({
+    enabled: process.env.NODE_ENV !== 'test',
     prettyPrint: {
       colorize: false,
       ignore: 'pid,hostname',
