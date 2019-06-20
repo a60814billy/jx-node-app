@@ -2,7 +2,7 @@ apiVersion: skaffold/v1beta2
 kind: Config
 build:
   artifacts:
-    - image: a60814billy/jx-node-app
+    - image: nimble-repeater-208016/jx-node-app
       context: .
       docker: {}
   tagPolicy:
