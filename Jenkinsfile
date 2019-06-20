@@ -48,7 +48,7 @@ pipeline {
                     sh "jx step git credentials"
 
                     // so we can retrieve the version in later steps
-                    // sh "echo \$(jx-release-version) > VERSION"
+                    sh "echo \$(jx-release-version) > VERSION"
                     // sh "jx step tag --version \$(cat VERSION)"
                 }
                 container('nodejs') {
