@@ -4,9 +4,10 @@ pipeline {
     }
 
     environment {
-        DOCKER_REGISTRY = 'asia.gcr.io'
-        ORG = 'nimble-repeater-208016'
+        ORG = 'a60814billy'
         APP_NAME = 'jx-node-app'
+        CHARTMUSEUM_CREDS = credentials('jenkins-x-chartmuseum')
+        DOCKER_REGISTRY_ORG = 'nimble-repeater-208016'
     }
 
     stages {
@@ -31,7 +32,28 @@ pipeline {
                 container('nodejs') {
                     sh script: "npm install", label: "Install npm dependencies"
                     sh script: "npx standard", label: "Run code style lint"
-                    sh script: "npm test", label: "Run testing"
+                    sh script: "CI=true DISPLAY=:99 npm test", label: "Run testing"
+                }
+            }
+        }
+
+        stage('Build PR') {
+            when {
+                branch 'PR-*'
+            }
+            environment {
+                PREVIEW_VERSION = "0.0.0-SNAPSHOT-$BRANCH_NAME-$BUILD_NUMBER"
+                PREVIEW_NAMESPACE = "$APP_NAME-$BRANCH_NAME".toLowerCase()
+                HELM_RELEASE = "$PREVIEW_NAMESPACE".toLowerCase()
+            }
+            steps {
+                container('nodejs') {
+                    sh "export VERSION=$PREVIEW_VERSION && skaffold build -f skaffold.yaml"
+                    sh "jx step post build --image $DOCKER_REGISTRY/$ORG/$APP_NAME:$PREVIEW_VERSION"
+                    dir('./charts/preview') {
+                        sh "make preview"
+                        sh "jx preview --app $APP_NAME --dir ../.."
+                    }
                 }
             }
         }
@@ -49,13 +71,28 @@ pipeline {
 
                     // so we can retrieve the version in later steps
                     sh "echo \$(jx-release-version) > VERSION"
-                    // sh "jx step tag --version \$(cat VERSION)"
+                    sh "jx step tag --version \$(cat VERSION)"
                 }
+
                 container('nodejs') {
                     sh "export VERSION=`cat VERSION` && skaffold build -f skaffold.yaml"
-                    sh "jx step post build --image $DOCKER_REGISTRY/$ORG/$APP_NAME:\$(cat VERSION)"
+                    // sh "jx step post build --image $DOCKER_REGISTRY/$ORG/$APP_NAME:\$(cat VERSION)"
+                }
+
+                container('nodejs') {
+                    dir('./charts/jx-node-app') {
+                        sh "jx step changelog --batch-mode --version v\$(cat ../../VERSION)"
+
+                        // release the helm chart
+                        sh "jx step helm release"
+                    }
                 }
             }
+        }
+    }
+    post {
+        always {
+            cleanWs()
         }
     }
 }

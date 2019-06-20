@@ -4,9 +4,9 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ template "fullname" . }}
-    labels:
-      draft: {{ default "draft-app" .Values.draft }}
-      chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+  labels:
+    draft: {{ default "draft-app" .Values.draft }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
 spec:
   replicas: {{ .Values.replicaCount }}
   template:
@@ -16,7 +16,7 @@ spec:
         app: {{ template "fullname" . }}
 {{- if .Values.podAnnotations }}
       annotations:
-        {{ toYaml .Values.podAnnotations | nindent 8 }}
+{{ toYaml .Values.podAnnotations | nindent 8 }}
 {{- end }}
     spec:
       containers:
@@ -46,6 +46,6 @@ spec:
             successThreshold: {{ .Values.readinessProbe.successThreshold }}
             timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
           resources:
-            {{ toYaml .Values.resources | nindent 12 }}
+{{ toYaml .Values.resources | nindent 12 }}
       terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
 {{- end }}
