@@ -34,7 +34,7 @@ service:
     fabric8.io/ingress.annotations: "kubernetes.io/ingress.class: nginx"
   type: ClusterIP
 
-resources:1`
+resources:
   limits:
     cpu: "50m"
     memory: "100Mi"
