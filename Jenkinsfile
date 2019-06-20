@@ -48,11 +48,11 @@ pipeline {
             }
             steps {
                 container('nodejs') {
-                    sh "export VERSION=$PREVIEW_VERSION && skaffold build -f skaffold.yaml"
-                    sh "jx step post build --image $DOCKER_REGISTRY/$ORG/$APP_NAME:$PREVIEW_VERSION"
+                    sh script: "export VERSION=$PREVIEW_VERSION && skaffold build -f skaffold.yaml", label: "build preview docker image"
+                    sh script: "jx step post build --image $DOCKER_REGISTRY/$ORG/$APP_NAME:$PREVIEW_VERSION", label: "start scan docker image"
                     dir('./charts/preview') {
-                        sh "make preview"
-                        sh "jx preview --app $APP_NAME --dir ../.."
+                        sh script: "make preview", label: "make preview helm chart"
+                        sh script: "jx preview --app $APP_NAME --dir ../..", label: "deploy preview app"
                     }
                 }
             }

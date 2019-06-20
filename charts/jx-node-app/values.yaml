@@ -10,11 +10,21 @@ replicaCount: 1
 image:
   repository: draft
   tag: dev
-  pullPolicy: IfNotPresent
+  pullPolicy: "IfNotPresent"
 
 podAnnotations: {}
 
 env: {}
+
+postgresql:
+  image:
+    tag: 10-debian-9
+  fullnameOverride: jxappdb
+  postgresqlUsername: postgres
+  postgresqlPassword: password
+  postgresqlDatabase: jxapp
+  persistence:
+    enabled: false
 
 service:
   name: jx-node-app-svc
@@ -27,8 +37,8 @@ service:
 
 resources:
   limits:
-    cup: 50m
-    memory: 100Mi
+    cpu: "50m"
+    memory: "100Mi"
 
 probePath: /
 livenessProbe:
