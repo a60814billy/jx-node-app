@@ -8,8 +8,8 @@ draft: {}
 replicaCount: 1
 
 image:
-  repository: draft
-  tag: dev
+  repository: asia.gcr.io/nimble-repeater-208016/jx-node-app
+  tag: 0.0.3
   pullPolicy: IfNotPresent
 
 podAnnotations: {}
