@@ -30,8 +30,9 @@ pipeline {
                     """, label: "Start database for testing"
                 }
                 container('nodejs') {
+                    sh script: "./cmd/restore-cache.sh"
                     sh script: "npm install", label: "Install npm dependencies"
-                    sh script: "./cache.sh", label: "cache node_modules"
+                    sh script: "./cmd/cache.sh", label: "cache node_modules"
                     sh script: "npx standard", label: "Run code style lint"
                     sh script: "CI=true DISPLAY=:99 npm test", label: "Run testing"
                 }
