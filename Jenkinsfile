@@ -31,13 +31,7 @@ pipeline {
                 }
                 container('nodejs') {
                     sh script: "npm install", label: "Install npm dependencies"
-                    sh script: """
-                        CACHE_FILE=npm-cache-$(md5sum package-lock.json | awk '{print $1}').tar.gz
-                        if [[ ! -f "$CACHE_FILE" ]]; then
-                            tar cf "$CACHE_FILE" ./node_modules
-                            jx step stash -c default -p "$CACHE_FILE"
-                        fi
-                    """, label: "cache node_modules"
+                    sh script: "./cache.sh", label: "cache node_modules"
                     sh script: "npx standard", label: "Run code style lint"
                     sh script: "CI=true DISPLAY=:99 npm test", label: "Run testing"
                 }
