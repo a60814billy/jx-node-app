@@ -3,6 +3,10 @@ pipeline {
         label "jenkins-nodejs8x-hackmd"
     }
 
+    triggers {
+        cron('H/5 * * * *')
+    }
+
     environment {
         ORG = 'a60814billy'
         APP_NAME = 'jx-node-app'
@@ -11,7 +15,7 @@ pipeline {
     }
 
     stages {
-        stage('CI Build and push') {
+        stage('Setup') {
             environment {
                 NODE_ENV = 'test'
                 POSTGRES_USER = 'user'
@@ -26,14 +30,37 @@ pipeline {
                         export POSTGRES_PASSWORD=${env.POSTGRES_PASSWORD}
                         export POSTGRES_DB=${env.POSTGRES_DB}
                         /usr/local/bin/docker-entrypoint.sh postgres > /dev/null &
-                        sleep 10
+                        sleep 3
                     """, label: "Start database for testing"
                 }
+
+            }
+        }
+
+        stage('Build') {
+            steps {
                 container('nodejs') {
-                    sh "env"
-                    sh script: "./cmd/restore-cache.sh"
                     sh script: "npm install", label: "Install npm dependencies"
-                    sh script: "./cmd/cache.sh", label: "cache node_modules"
+                }
+                sh script: "npx standard", label: "Run code style lint"
+                sh script: "CI=true DISPLAY=:99 npm test", label: "Run testing"
+            }
+        }
+
+        stage('--') {
+            when {
+                expression { return currentBuild.rawBuild.getCause(hudson.triggers.TimerTrigger$TimerTriggerCause) }
+            }
+            steps {
+                container('nodejs') {
+                    echo "--"
+                }
+            }
+        }
+
+        stage('Test') {
+            steps {
+                container('nodejs') {
                     sh script: "npx standard", label: "Run code style lint"
                     sh script: "CI=true DISPLAY=:99 npm test", label: "Run testing"
                 }
