@@ -1,10 +1,12 @@
+def isTimerBuild = isJobStartedByTimer()
+
 pipeline {
     agent {
         label "jenkins-nodejs8x-hackmd"
     }
 
     triggers {
-        cron('H/5 * * * *')
+        cron('H/3 * * * *')
     }
 
     environment {
@@ -47,6 +49,11 @@ pipeline {
         }
 
         stage('--') {
+            when {
+                expression {
+                    isTimerBuild == true
+                }
+            }
             steps {
                 container('nodejs') {
                     echo "--"
@@ -120,4 +127,22 @@ pipeline {
             cleanWs()
         }
     }
+}
+
+
+@NonCPS
+def isJobStartedByTimer() {
+    try {
+        for ( buildCause in currentBuild.getBuildCauses() ) {
+            if (buildCause != null) {
+                if (buildCause.shortDescription.contains("Started by timer")) {
+                    echo "build started by timer"
+                    return true
+                }
+            }
+        }
+    } catch(theError) {
+        echo "Error getting build cause: ${theError}"
+    }
+    return false
 }
