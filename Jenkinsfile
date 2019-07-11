@@ -61,7 +61,6 @@ pipeline {
         stage('Test') {
             steps {
                 container('nodejs') {
-                    sh script: "npx standard", label: "Run code style lint"
                     sh script: "CI=true DISPLAY=:99 npm test", label: "Run testing"
                 }
             }
