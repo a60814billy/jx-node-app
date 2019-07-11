@@ -44,7 +44,6 @@ pipeline {
                 container('nodejs') {
                     sh script: "npm install", label: "Install npm dependencies"
                 }
-                sh script: "CI=true DISPLAY=:99 npm test", label: "Run testing"
             }
         }
 
