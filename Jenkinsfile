@@ -48,9 +48,6 @@ pipeline {
         }
 
         stage('--') {
-            when {
-                expression { return currentBuild.rawBuild.getCause(hudson.triggers.TimerTrigger$TimerTriggerCause) }
-            }
             steps {
                 container('nodejs') {
                     echo "--"
