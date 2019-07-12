@@ -5,10 +5,6 @@ pipeline {
         label "jenkins-nodejs8x-hackmd"
     }
 
-    triggers {
-        cron('H/3 * * * *')
-    }
-
     environment {
         ORG = 'a60814billy'
         APP_NAME = 'jx-node-app'
