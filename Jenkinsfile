@@ -1,3 +1,5 @@
+def isTimerBuild = isJobStartedByTimer()
+
 pipeline {
     agent {
         label "jenkins-nodejs8x-hackmd"
@@ -11,7 +13,7 @@ pipeline {
     }
 
     stages {
-        stage('CI Build and push') {
+        stage('Setup') {
             environment {
                 NODE_ENV = 'test'
                 POSTGRES_USER = 'user'
@@ -26,13 +28,38 @@ pipeline {
                         export POSTGRES_PASSWORD=${env.POSTGRES_PASSWORD}
                         export POSTGRES_DB=${env.POSTGRES_DB}
                         /usr/local/bin/docker-entrypoint.sh postgres > /dev/null &
-                        sleep 10
+                        sleep 3
                     """, label: "Start database for testing"
                 }
+
+            }
+        }
+
+        stage('Build') {
+            steps {
                 container('nodejs') {
                     sh script: "npm install", label: "Install npm dependencies"
-                    sh script: "npx standard", label: "Run code style lint"
-                    sh script: "CI=true DISPLAY=:99 npm test", label: "Run testing"
+                }
+            }
+        }
+
+        stage('--') {
+            when {
+                expression {
+                    isTimerBuild == true
+                }
+            }
+            steps {
+                container('nodejs') {
+                    echo "--"
+                }
+            }
+        }
+
+        stage('Test') {
+            steps {
+                container('nodejs') {
+                    echo "pass"
                 }
             }
         }
@@ -95,4 +122,22 @@ pipeline {
             cleanWs()
         }
     }
+}
+
+
+@NonCPS
+def isJobStartedByTimer() {
+    try {
+        for ( buildCause in currentBuild.getBuildCauses() ) {
+            if (buildCause != null) {
+                if (buildCause.shortDescription.contains("Started by timer")) {
+                    echo "build started by timer"
+                    return true
+                }
+            }
+        }
+    } catch(theError) {
+        echo "Error getting build cause: ${theError}"
+    }
+    return false
 }

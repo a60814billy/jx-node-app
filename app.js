@@ -71,7 +71,7 @@ async function bootstrap () {
 
 async function main () {
   try {
-    logger.info('server starting, connecting database........')
+    logger.info('server starting, connecting database')
     const [app, db] = await bootstrap()
     logger.info(`Starting server listening on :${PORT}`)
     app.listen(PORT)

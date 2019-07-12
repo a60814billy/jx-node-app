@@ -27,7 +27,7 @@ postgresql:
     enabled: false
 
 service:
-  name: jx-node-app-svc
+  name: jx-node-app
   externalPort: 80
   internalPort: 8080
   annotations:
